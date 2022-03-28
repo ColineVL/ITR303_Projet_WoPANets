@@ -18,7 +18,7 @@ def main():
 
     # Premier calcul : les courbes d'arrivée des Stations
     for flow in flows.values():
-        flow.source.arrivalCurveAggregated.add(flow.get_datalength, flow.get_rate)
+        flow.source.arrivalCurveAggregated.add(flow.get_datalength(), flow.get_rate())
 
     # Deuxième passe : on calcule les délais de chaque Station de départ des flows
     # et on update la courbe d'arrivée de la dite Station
