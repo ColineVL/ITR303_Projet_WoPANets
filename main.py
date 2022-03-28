@@ -29,7 +29,7 @@ def main(file):
     C = 100 * 10**6
 
     # Création du réseau
-    flows, arrayTargets = parseNetwork(file)
+    flows, arrayTargets, edges = parseNetwork(file)
 
     # Premier calcul : les courbes d'arrivée des Stations
     for flow in flows.values():
@@ -97,13 +97,17 @@ def main(file):
         # Je suis bloqué ou j'ai fini, je passe à la target suivante
         indexCurrentTarget = (indexCurrentTarget + 1) % nbTargetsToComplete
 
+    # Calcul des load sur chaque edge
+    for edge in edges:
+        edge.load = edge.arrivalCurveAggregated.rate * 100 / C
+
     # J'ai terminé de tout calculer
-    saveNetwork(file, flows.values())
+    saveNetwork(file, flows.values(), edges)
 
 
 if __name__ == "__main__":
     if len(sys.argv) >= 2:
         xmlFile = sys.argv[1]
     else:
-        xmlFile = "./documentation/samples/simple.xml"
+        xmlFile = "./documentation/samples/AFDX.xml"
     main(xmlFile)

@@ -127,6 +127,6 @@ def parseNetwork(xmlFile):
         parseSwitches(root)
         parseEdges(root)
         parseFlows(root)
-        return flows, targets
+        return flows, targets, edges
     else:
         print("File not found: " + xmlFile)

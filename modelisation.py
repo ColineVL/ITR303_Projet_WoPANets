@@ -116,7 +116,8 @@ class Edge:
         Tableau des identifiants des flows déjà comptabilisés dans la arrivalCurveAggregated
     delay : float
         Délai subi en passant par ce edge, en s
-
+    load : float
+        Charge du edge, en % (par rapport au débit maximal)
     """
 
     def __init__(self, source, destination, name):
