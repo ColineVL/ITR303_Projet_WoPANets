@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 import os.path
 from modelisation import Flow, Station, Switch, Edge, Target
 
-
+# Des tableaux / dictionnaires à remplir !
 nodes = {}
 edges = []
 flows = {}
@@ -10,14 +10,17 @@ targets = []
 
 
 def convertBytes2Bits(byte):
+    """Passer d'octets à bits"""
     return byte * 8
 
 
 def convertMilli2Seconds(milliseconds):
+    """Passer de ms à s"""
     return milliseconds / 1000
 
 
 def findEdge(source, dest):
+    """Trouver, dans edges, celui qui part de source pour aller à dest"""
     found = [
         index
         for index in range(len(edges))
@@ -59,12 +62,12 @@ def parseEdges(root):
         dest = nodes[link.get("to")]
         name = link.get("name")
 
-        # Pour chaque edge, je dois aussi l'ajouter dans les ports du switch source
         edge = Edge(source, dest, name)
         edges.append(edge)
+        # Pour chaque edge, je dois aussi l'ajouter dans les ports du switch source
         if isinstance(source, Switch):
             source.ports[dest.name] = edge
-        # A chaque fois je le crée dans les deux sens
+        # A chaque fois je le crée dans les deux sens : je dois recommencer pour l'autre sens
         source, dest = dest, source
         edge = Edge(source, dest, name)
         edges.append(edge)
@@ -77,10 +80,9 @@ def parseFlows(root):
     Method to parse flows
         root : the xml main root
     """
-    # D'abord on crée le flow correspondant
     for fl in root.findall("flow"):
-        edgesParcourusParTousTargets = []
 
+        # On crée le flow
         name = fl.get("name")
         source = nodes[fl.get("source")]
 
@@ -93,17 +95,23 @@ def parseFlows(root):
         )
         flows[name] = flow
 
+        # Dans ce flow, on va croiser un certain nombre de edges, on les range ici (sans doublon please)
+        edgesParcourusParTousTargets = []
+
         # Ensuite on crée les targets desservies
         for tg in fl.findall("target"):
             dest = nodes[tg.get("name")]
             target = Target(flow, dest)
             flow.targets.append(target)
 
+            # Pour chaque étape dans le chemin de cette target...
             stepSource = source
             for pt in tg.findall("path"):
                 stepDest = nodes[pt.get("node")]
+                # On retrouve le edge correspondant et on l'ajoute au path
                 edge = edges[findEdge(stepSource, stepDest)]
                 target.path.append(edge)
+                # Si je ne l'ai pas déjà croisé, je le note
                 if edge not in edgesParcourusParTousTargets:
                     edgesParcourusParTousTargets.append(edge)
                 stepSource = stepDest

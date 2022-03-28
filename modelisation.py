@@ -24,7 +24,7 @@ class Flow:
         self.payload = payload
         self.period = period
         self.source = source
-        self.targets = []
+        self.targets = []  # rempli quand on parse le XML
 
     def get_datalength(self):
         return self.overhead + self.payload
@@ -54,7 +54,7 @@ class Target:
     currentStep : float
         Indice de path : où on s'est arrêté la dernière fois qu'on a calculé quelque chose sur ce flow pour cette target
     arrivalCurve : ArrivalCurve
-        Courbe d'arrivé du flow pour cette target
+        Courbe d'arrivée du flow pour cette target
     totalDelay : float
         Délai total du flow pour cette target, en s
     completed : bool
@@ -62,12 +62,14 @@ class Target:
     """
 
     def __init__(self, flow, destination):
-        self.path = []
+        self.path = []  # rempli quand on parse le XML
         self.flow = flow
         self.destination = destination
-        self.currentStep = 0
-        self.arrivalCurve = ArrivalCurve(flow.get_datalength(), flow.get_rate())
-        self.totalDelay = 0
+        self.currentStep = 0  # incrémenté au fur et à mesure du calcul
+        self.arrivalCurve = ArrivalCurve(
+            flow.get_datalength(), flow.get_rate()
+        )  # On la décalera d'un certain délai à chaque fois que l'on partira d'un node
+        self.totalDelay = 0  # Calculé à la fin, quand tout est prêt pour ce chemin
         self.completed = False
 
 
@@ -88,10 +90,12 @@ class ArrivalCurve:
         self.rate = rate
 
     def add(self, burst, rate):
+        """On aggrège une nouvelle courbe, on somme donc"""
         self.burst += burst
         self.rate += rate
 
     def addDelay(self, delay):
+        """On décale d'un certain delay, ça ne change pas le rate"""
         self.burst += delay * self.rate
 
 
@@ -124,9 +128,15 @@ class Edge:
         self.source = source
         self.destination = destination
         self.name = name
-        self.objectif = 0
-        self.arrivalCurveAggregated = ArrivalCurve(0, 0)
-        self.flowsPassed = []
+        self.objectif = 0  # Calculé à la fin du parseXML
+        self.arrivalCurveAggregated = ArrivalCurve(
+            0, 0
+        )  # On aggrègera toutes les courbes qui passeront par ce Edge
+        self.flowsPassed = (
+            []
+        )  # Quand on aggrège, on le note ici aussi pour ne pas oublier qu'on l'a déjà mis !
+        self.delay = 0  # Calculé quand on aura fini de tout aggréger
+        self.load = 0  # Calculé tout à la fin, pour comparer à C
 
     def __repr__(self):
         return f"Edge from {self.source.name} to {self.destination.name}"
@@ -166,7 +176,7 @@ class Switch(Node):
     """
 
     def __init__(self, name):
-        self.ports = {}
+        self.ports = {}  # Rempli dans le parseXML
         super().__init__(name)
 
     def getDelay(self, nomDestination):
@@ -186,8 +196,11 @@ class Station(Node):
     """
 
     def __init__(self, name):
-        self.arrivalCurveAggregated = ArrivalCurve(0, 0)
+        self.arrivalCurveAggregated = ArrivalCurve(
+            0, 0
+        )  # Calculé pendant la première passe du programme
+        self.delay = 0  # Calculé pendant la deuxième passe du programme
         super().__init__(name)
 
-    def getDelay(self, nomDestination):
+    def getDelay(self, _):
         return self.delay

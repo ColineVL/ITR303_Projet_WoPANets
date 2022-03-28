@@ -21,11 +21,7 @@ def saveNetwork(xmlFile, flows, edges):
         res.write('\t\t<flow name="' + flow.name + '">\n')
         for target in flow.targets:
             res.write(
-                '\t\t\t<target name="'
-                + target.destination.name
-                + '" value="'
-                + str(convertSeconds2Micro(target.totalDelay))
-                + '" />\n'
+                f'\t\t\t<target name="{target.destination.name}" value="{convertSeconds2Micro(target.totalDelay)}" />\n'
             )
         res.write("\t\t</flow>\n")
     res.write("\t</delays>\n")
@@ -33,6 +29,7 @@ def saveNetwork(xmlFile, flows, edges):
     # Les loads
     res.write("\t<load>\n")
     for i in range(0, len(edges) - 1, 2):
+        # Ils vont toujours par paires
         edgeDirect = edges[i]
         edgeReverse = edges[i + 1]
         res.write('\t\t<edge name="' + edgeDirect.name + '">\n')
