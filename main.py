@@ -6,6 +6,9 @@ def testAvancer(target):
     edge = target.path[target.currentStep]
     if isinstance(edge.source, Station):
         return True
+    if target.completed:
+        # La target est complète, je ne peux plus l'avancer
+        return False
     port = edge.source.ports[edge.destination.name]
     return len(port.flowsPassed) == port.objectif
 
@@ -15,7 +18,7 @@ def main():
     C = 100 * 10**6
 
     # Création du réseau
-    file = "./documentation/samples/AFDX.xml"
+    file = "./documentation/samples/STAR_3.xml"
     flows, arrayTargets = parseNetwork(file)
 
     # Premier calcul : les courbes d'arrivée des Stations
@@ -80,7 +83,7 @@ def main():
                         )
                         port.flowsPassed.append(target.flow.name)
 
-                    # Je vérifie si ce switch a toutes les infos qu'il lui faut pour calculer son délai, retour au début de la boucle while
+                        # Je vérifie si ce switch a toutes les infos qu'il lui faut pour calculer son délai, retour au début de la boucle while
 
         # Je suis bloqué ou j'ai fini, je passe à la target suivante
         indexCurrentTarget = (indexCurrentTarget + 1) % nbTargetsToComplete
