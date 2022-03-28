@@ -59,6 +59,8 @@ def parseEdges(root):
         dest = nodes[sw.get("to")]
         name = sw.get("name")
         edges.append(Edge(source, dest, name))
+        # A chaque fois je le crée dans les deux sens
+        edges.append(Edge(dest, source, name))
 
 
 def parseFlows(root):
