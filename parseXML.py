@@ -65,7 +65,8 @@ def parseEdges(root):
         if isinstance(source, Switch):
             source.ports[dest.name] = edge
         # A chaque fois je le crée dans les deux sens
-        edge = Edge(dest, source, name)
+        source, dest = dest, source
+        edge = Edge(source, dest, name)
         edges.append(edge)
         if isinstance(source, Switch):
             source.ports[dest.name] = edge
