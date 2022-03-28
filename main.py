@@ -29,6 +29,7 @@ def main():
         source = target.flow.source
         source.delay = target.arrivalCurve.burst / C
         target.arrivalCurve.addDelay(source.delay)
+        target.currentStep += 1
 
     # Début de la grande boucle de calcul
     # On passe sur toutes les target et on avance aussi loin que possible
@@ -45,6 +46,9 @@ def main():
         # Je vérifie si je peux avancer
         while testAvancer(target):
             # yay ! Je peux avancer !
+
+            edge = target.path[target.currentStep]
+            port = edge.source.ports[edge.destination.nom]
 
             # J'update
             # Calcul du delay de edge.source
