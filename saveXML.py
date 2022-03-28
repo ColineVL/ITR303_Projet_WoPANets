@@ -1,5 +1,5 @@
-def convertSeconds2Milli(seconds):
-    return seconds * 1000
+def convertSeconds2Micro(seconds):
+    return seconds * 10 ** 6
 
 
 def saveNetwork(xmlFile, flows):
@@ -23,7 +23,7 @@ def saveNetwork(xmlFile, flows):
                 '\t\t\t<target name="'
                 + target.destination.name
                 + '" value="'
-                + str(convertSeconds2Milli(target.totalDelay))
+                + str(convertSeconds2Micro(target.totalDelay))
                 + '" />\n'
             )
         res.write("\t\t</flow>\n")
