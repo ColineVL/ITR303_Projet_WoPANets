@@ -69,7 +69,7 @@ def main():
                 # Il reste encore de la route, je passe au node suivant
                 target.currentStep += 1
                 edge = target.path[target.currentStep]
-                port = edge.source.ports[edge.destination.nom]
+                port = edge.source.ports[edge.destination.name]
                 # Je m'ajoute dans la courbe d'arrivée de ce nouveau switch, si mon flow n'a pas déjà été compté
                 flowDejaCompte = target.flow.name in port.flowsPassed
                 if not flowDejaCompte:
