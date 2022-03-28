@@ -79,6 +79,8 @@ def parseFlows(root):
     """
     # D'abord on crée le flow correspondant
     for fl in root.findall("flow"):
+        edgesParcourusParTousTargets = []
+
         name = fl.get("name")
         source = nodes[fl.get("source")]
 
@@ -100,11 +102,16 @@ def parseFlows(root):
             stepSource = source
             for pt in tg.findall("path"):
                 stepDest = nodes[pt.get("node")]
-                indexEdge = findEdge(stepSource, stepDest)
-                target.path.append(edges[indexEdge])
+                edge = edges[findEdge(stepSource, stepDest)]
+                target.path.append(edge)
+                edgesParcourusParTousTargets.append(edge)
                 stepSource = stepDest
 
             targets.append(target)
+
+        # J'augmente l'objectif des edges parcourus par ce flow
+        for edge in edgesParcourusParTousTargets:
+            edge.objectif += 1
 
 
 def parseNetwork(xmlFile):
