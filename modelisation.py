@@ -70,12 +70,6 @@ class Target:
         self.totalDelay = 0
         self.completed = False
 
-        def __repr__(self):
-            return f"Target, flow {self.flow.name}, dest {self.destination}"
-
-        def __str__(self):
-            return f"Target, flow {self.flow.name}, dest {self.destination}"
-
 
 class ArrivalCurve:
     """
