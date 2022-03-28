@@ -32,6 +32,12 @@ class Flow:
     def get_rate(self):
         return self.get_datalength() / self.period
 
+    def __repr__(self):
+        return f"Flow {self.name}"
+
+    def __str__(self):
+        return f"Flow {self.name}"
+
 
 class Target:
     """
@@ -58,8 +64,14 @@ class Target:
         self.flow = flow
         self.destination = destination
         self.currentStep = 0
-        self.arrivalCurve = ArrivalCurve(flow.get_datalength(), flow.rate)
+        self.arrivalCurve = ArrivalCurve(flow.get_datalength(), flow.get_rate())
         self.totalDelay = 0
+
+        def __repr__(self):
+            return f"Target, flow {self.flow.name}, dest {self.destination}"
+
+        def __str__(self):
+            return f"Target, flow {self.flow.name}, dest {self.destination}"
 
 
 class ArrivalCurve:
@@ -118,6 +130,12 @@ class Edge:
         self.arrivalCurveAggregated = ArrivalCurve(0, 0)
         self.flowsPassed = []
 
+    def __repr__(self):
+        return f"Edge from {self.source.name} to {self.destination.name}"
+
+    def __str__(self):
+        return f"Edge from {self.source.name} to {self.destination.name}"
+
 
 class Node:
     """
@@ -131,6 +149,12 @@ class Node:
 
     def __init__(self, name):
         self.name = name
+
+    def __repr__(self):
+        return f"Node {self.name}"
+
+    def __str__(self):
+        return f"Node {self.name}"
 
 
 class Switch(Node):

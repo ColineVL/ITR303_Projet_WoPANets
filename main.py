@@ -1,4 +1,5 @@
-from modelisation import Edge, Flow, Station, Target
+from modelisation import Flow, Station, Target
+from parseXML import parseNetwork
 
 
 def testAvancer(target):
@@ -7,18 +8,16 @@ def testAvancer(target):
     return len(port.flowsPassed) == port.objectif
 
 
-# FIXME des petites conversions en octet non ?
 def main():
     # Constantes
     C = 100 * 10**6
 
-    station = Station("testStation")
-    arrayFlows = [Flow("test", 1, 2, 4, station)]
-    target = Target(arrayFlows[0], station)
-    arrayTargets = [target]
+    # Création du réseau
+    file = "./documentation/samples/AFDX.xml"
+    flows, arrayTargets = parseNetwork(file)
 
     # Premier calcul : les courbes d'arrivée des Stations
-    for flow in arrayFlows:
+    for flow in flows.values():
         flow.source.arrivalCurveAggregated.add(flow.get_datalength, flow.get_rate)
 
     # Deuxième passe : on calcule les délais de chaque Station de départ des flows
