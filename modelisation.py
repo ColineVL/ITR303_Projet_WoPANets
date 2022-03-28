@@ -168,7 +168,7 @@ class Switch(Node):
     """
 
     def __init__(self, name):
-        self.ports = []
+        self.ports = {}
         super().__init__(name)
 
     def getDelay(self, nomDestination):
