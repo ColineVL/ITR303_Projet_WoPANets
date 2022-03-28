@@ -1,13 +1,13 @@
 import xml.etree.ElementTree as ET
 import os.path
-import sys
-from modelisation import *
+from modelisation import Flow, Station, Switch, Edge, Target
 
 file = "documentation\sample\3ESE.xml"
 
 nodes = {}
 edges = {}
 flows = {}
+targets = []
 
 
 def convertBytes2Bits(byte):
@@ -16,6 +16,16 @@ def convertBytes2Bits(byte):
 
 def convertMilli2Seconds(milliseconds):
     return milliseconds / 1000
+
+
+def findEdge(source, dest):
+    found = [
+        i
+        for (y, i) in zip(edges, range(len(edges)))
+        if (source.name == y.source.name) and (dest.name == y.destination.name)
+    ]
+    assert len(found) == 1
+    return found[0]
 
 
 """ parseStations
@@ -82,10 +92,15 @@ def parseFlows(root):
             dest = nodes[tg.get("name")]
             target = Target(flow, dest)
             flow.targets.append(target)
-            target.path.append(flow.source)
+
+            stepSource = source
             for pt in tg.findall("path"):
-                step = nodes[pt.get("node")]
-                target.path.append(step)
+                stepDest = nodes[pt.get("node")]
+                edge = findEdge(stepSource, stepDest)
+                target.path.append(edge)
+                stepSource = stepDest
+
+            targets.append(target)
 
 
 """ parseNetwork
