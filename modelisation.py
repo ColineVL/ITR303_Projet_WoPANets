@@ -105,9 +105,6 @@ class Edge:
         Identifiant du edge
     objectif : int
         Nombre de flows qui arrivent dans la source et qui ensuite partent vers destination
-    increment : int
-        Nombre de ces flows de passage qu'on a déjà comptabilisés dans la arrivalCurveAggregated
-        # TODO inutile puisqu'on fait la liste dans flowPassed ?
     arrivalCurveAggregated : ArrivalCurve
         Somme des courbes d'arrivée des flows arrivant sur source et partant vers destination
     flowsPassed : array
@@ -122,9 +119,8 @@ class Edge:
         self.destination = destination
         self.name = name
         self.objectif = 0
-        self.increment = 0
         self.arrivalCurveAggregated = ArrivalCurve(0, 0)
-        self.flowPassed = []
+        self.flowsPassed = []
 
 
 class Node:
@@ -147,13 +143,16 @@ class Switch(Node):
 
     Attributes
     ----------
-    ports : array
-        L'ensemble des Edges partant de ce switch
+    ports : dict
+        L'ensemble des Edges partant de ce switch : mappe nom destination du edge -> edge
     """
 
     def __init__(self, name):
         self.ports = []
         super().__init__(name)
+
+    def getDelay(self, nomDestination):
+        return self.ports[nomDestination].delay
 
 
 class Station(Node):
@@ -171,3 +170,6 @@ class Station(Node):
     def __init__(self, name):
         self.arrivalCurveAggregated = ArrivalCurve(0, 0)
         super().__init__(name)
+
+    def getDelay(self, nomDestination):
+        return self.delay
