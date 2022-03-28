@@ -1,5 +1,6 @@
-from modelisation import Flow, Station, Target
+from modelisation import Station
 from parseXML import parseNetwork
+from saveXML import saveNetwork
 
 
 def testAvancer(target):
@@ -87,6 +88,9 @@ def main():
 
         # Je suis bloqué ou j'ai fini, je passe à la target suivante
         indexCurrentTarget = (indexCurrentTarget + 1) % nbTargetsToComplete
+
+    # J'ai terminé de tout calculer
+    saveNetwork(file, flows.values())
 
 
 if __name__ == "__main__":
