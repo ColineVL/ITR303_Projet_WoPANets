@@ -4,6 +4,15 @@ from saveXML import saveNetwork
 import sys
 
 
+def ajouterMaCourbeArriveeDansSwitch(target, port):
+    flowDejaCompte = target.flow.name in port.flowsPassed
+    if not flowDejaCompte:
+        port.arrivalCurveAggregated.add(
+            target.arrivalCurve.burst, target.arrivalCurve.rate
+        )
+        port.flowsPassed.append(target.flow.name)
+
+
 def testAvancer(target):
     edge = target.path[target.currentStep]
     if isinstance(edge.source, Station):
@@ -28,12 +37,16 @@ def main(file):
 
     # Deuxième passe : on calcule les délais de chaque Station de départ des flows
     # et on update la courbe d'arrivée de la dite Station
-
+    # et j'ajoute ma courbe d'arrivée dans le premier switch
     for target in arrayTargets:
         source = target.flow.source
-        source.delay = target.arrivalCurve.burst / C
+        source.delay = source.arrivalCurveAggregated.burst / C
         target.arrivalCurve.addDelay(source.delay)
         target.currentStep += 1
+
+        edge = target.path[target.currentStep]
+        port = edge.source.ports[edge.destination.name]
+        ajouterMaCourbeArriveeDansSwitch(target, port)
 
     # Début de la grande boucle de calcul
     # On passe sur toutes les target et on avance aussi loin que possible
@@ -77,14 +90,9 @@ def main(file):
                     edge = target.path[target.currentStep]
                     port = edge.source.ports[edge.destination.name]
                     # Je m'ajoute dans la courbe d'arrivée de ce nouveau switch, si mon flow n'a pas déjà été compté
-                    flowDejaCompte = target.flow.name in port.flowsPassed
-                    if not flowDejaCompte:
-                        port.arrivalCurveAggregated.add(
-                            target.arrivalCurve.burst, target.arrivalCurve.rate
-                        )
-                        port.flowsPassed.append(target.flow.name)
+                    ajouterMaCourbeArriveeDansSwitch(target, port)
 
-                        # Je vérifie si ce switch a toutes les infos qu'il lui faut pour calculer son délai, retour au début de la boucle while
+                    # Je vérifie si ce switch a toutes les infos qu'il lui faut pour calculer son délai, retour au début de la boucle while
 
         # Je suis bloqué ou j'ai fini, je passe à la target suivante
         indexCurrentTarget = (indexCurrentTarget + 1) % nbTargetsToComplete
@@ -97,5 +105,5 @@ if __name__ == "__main__":
     if len(sys.argv) >= 2:
         xmlFile = sys.argv[1]
     else:
-        xmlFile = "./ES2E_M.xml"
+        xmlFile = "./documentation/samples/simple.xml"
     main(xmlFile)
