@@ -7,6 +7,7 @@ def testAvancer(target):
     return len(port.flowsPassed) == port.objectif
 
 
+# FIXME des petites conversions en octet non ?
 def main():
     # Constantes
     C = 100 * 10**6
