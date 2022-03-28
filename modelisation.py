@@ -82,6 +82,13 @@ class ArrivalCurve:
         self.burst = burst
         self.rate = rate
 
+    def add(self, burst, rate):
+        self.burst += burst
+        self.rate += rate
+
+    def addDelay(self, delay):
+        self.burst += delay * self.rate
+
 
 class Edge:
     """
