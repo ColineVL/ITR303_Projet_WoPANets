@@ -104,7 +104,8 @@ def parseFlows(root):
                 stepDest = nodes[pt.get("node")]
                 edge = edges[findEdge(stepSource, stepDest)]
                 target.path.append(edge)
-                edgesParcourusParTousTargets.append(edge)
+                if edge not in edgesParcourusParTousTargets:
+                    edgesParcourusParTousTargets.append(edge)
                 stepSource = stepDest
 
             targets.append(target)
