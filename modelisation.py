@@ -57,6 +57,8 @@ class Target:
         Courbe d'arrivé du flow pour cette target
     totalDelay : float
         Délai total du flow pour cette target, en s
+    completed : bool
+        True si cette target a été complétée
     """
 
     def __init__(self, flow, destination):
@@ -66,6 +68,7 @@ class Target:
         self.currentStep = 0
         self.arrivalCurve = ArrivalCurve(flow.get_datalength(), flow.get_rate())
         self.totalDelay = 0
+        self.completed = False
 
         def __repr__(self):
             return f"Target, flow {self.flow.name}, dest {self.destination}"
