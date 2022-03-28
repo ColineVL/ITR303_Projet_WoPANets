@@ -1,5 +1,5 @@
 def convertSeconds2Micro(seconds):
-    return seconds * 10 ** 6
+    return seconds * 10**6
 
 
 def saveNetwork(xmlFile, flows):
@@ -30,7 +30,7 @@ def saveNetwork(xmlFile, flows):
     res.write("\t</delays>\n")
     res.write("</results>\n")
     res.close()
-    file2output(resFile)
+    # file2output(resFile)
 
 
 def file2output(file):
