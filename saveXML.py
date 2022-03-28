@@ -1,3 +1,7 @@
+def convertSeconds2Milli(seconds):
+    return seconds * 1000
+
+
 def saveNetwork(xmlFile, flows):
     """saveNetwork
     Method to save the delays in a new XML file
@@ -19,7 +23,7 @@ def saveNetwork(xmlFile, flows):
                 '\t\t\t<target name="'
                 + target.destination.name
                 + '" value="'
-                + str(target.totalDelay)
+                + str(convertSeconds2Milli(target.totalDelay))
                 + '" />\n'
             )
         res.write("\t\t</flow>\n")
