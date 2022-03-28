@@ -54,13 +54,17 @@ def parseEdges(root):
     Method to parse edges
         root : the xml main root
     """
-    for sw in root.findall("link"):
-        source = nodes[sw.get("from")]
-        dest = nodes[sw.get("to")]
-        name = sw.get("name")
+    for link in root.findall("link"):
+        source = nodes[link.get("from")]
+        dest = nodes[link.get("to")]
+        name = link.get("name")
         edges.append(Edge(source, dest, name))
         # A chaque fois je le crée dans les deux sens
         edges.append(Edge(dest, source, name))
+
+        # Pour chaque edge, je dois l'ajouter dans les ports du switch source
+        if isinstance(source, Switch):
+            source.ports[name] = link
 
 
 def parseFlows(root):
