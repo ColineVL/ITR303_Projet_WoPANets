@@ -9,6 +9,15 @@ nodes = {}
 edges = {}
 flows = {}
 
+
+def convertBytes2Bits(byte):
+    return byte * 8
+
+
+def convertMilli2Seconds(milliseconds):
+    return milliseconds / 1000
+
+
 """ parseStations
     Method to parse stations
         root : the xml main root
@@ -60,7 +69,11 @@ def parseFlows(root):
         source = nodes[fl.get("source")]
 
         flow = Flow(
-            name, 67, float(fl.get("max-payload")), float(fl.get("period")), source
+            name,
+            convertBytes2Bits(67),
+            convertBytes2Bits(float(fl.get("max-payload"))),
+            convertMilli2Seconds(float(fl.get("period"))),
+            source,
         )
         flows[name] = flow
 

@@ -1,21 +1,17 @@
-def convertSeconds(milliseconds):
-    return milliseconds / 1000
-
-
 class Flow:
     """
     Un flow, entre deux stations, passant par des switch.
 
     Attributes
     ----------
-    overhead : int
-        Nombre d'octets de l'overhead, bytes
-    payload : int
-        Nombre d'octets de la charge utile, bytes
+    overhead : float
+        Nombre d'octets de l'overhead, bits
+    payload : float
+        Nombre d'octets de la charge utile, bits
     name : str
         Identifiant du flow
-    period : int
-        Période d'émission des messages, ms
+    period : float
+        Période d'émission des messages, en s
     source : Station
         Début du flow
     targets: array
@@ -34,7 +30,7 @@ class Flow:
         return self.overhead + self.payload
 
     def get_rate(self):
-        return self.get_datalength() / convertSeconds(self.period)
+        return self.get_datalength() / self.period
 
 
 class Target:
@@ -49,12 +45,12 @@ class Target:
         Flow parent
     destination : Station
         La target en elle-même : où va-t-on ?
-    currentStep : int
+    currentStep : float
         Indice de path : où on s'est arrêté la dernière fois qu'on a calculé quelque chose sur ce flow pour cette target
     arrivalCurve : ArrivalCurve
         Courbe d'arrivé du flow pour cette target
-    totalDelay : int
-        Délai total du flow pour cette target, en ms
+    totalDelay : float
+        Délai total du flow pour cette target, en s
     """
 
     def __init__(self, flow, destination):
@@ -72,10 +68,10 @@ class ArrivalCurve:
 
     Attributes
     ----------
-    burst : int
-        Valeur du burst, en ms
-    rate : int
-        Valeur du rate, en ms
+    burst : float
+        Valeur du burst, en s
+    rate : float
+        Valeur du rate, en s
     """
 
     def __init__(self, burst, rate):
@@ -103,14 +99,14 @@ class Edge:
         Fin du edge
     name : str
         Identifiant du edge
-    objectif : int
+    objectif : float
         Nombre de flows qui arrivent dans la source et qui ensuite partent vers destination
     arrivalCurveAggregated : ArrivalCurve
         Somme des courbes d'arrivée des flows arrivant sur source et partant vers destination
     flowsPassed : array
         Tableau des identifiants des flows déjà comptabilisés dans la arrivalCurveAggregated
-    delay : int
-        Délai subi en passant par ce edge
+    delay : float
+        Délai subi en passant par ce edge, en s
 
     """
 
@@ -163,8 +159,8 @@ class Station(Node):
     ----------
     arrivalCurveAggregated : ArrivalCurve
         Courbe d'arrivée agrégée des flows qui partent de cette station (la somme quoi)
-    delay : int
-        Délai de la station, en ms
+    delay : float
+        Délai de la station, en s
     """
 
     def __init__(self, name):
