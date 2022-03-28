@@ -1,6 +1,7 @@
 from modelisation import Station
 from parseXML import parseNetwork
 from saveXML import saveNetwork
+import sys
 
 
 def testAvancer(target):
@@ -14,12 +15,11 @@ def testAvancer(target):
     return len(port.flowsPassed) == port.objectif
 
 
-def main():
+def main(file):
     # Constantes
     C = 100 * 10**6
 
     # Création du réseau
-    file = "./documentation/samples/STAR_3.xml"
     flows, arrayTargets = parseNetwork(file)
 
     # Premier calcul : les courbes d'arrivée des Stations
@@ -94,4 +94,8 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) >= 2:
+        xmlFile = sys.argv[1]
+    else:
+        xmlFile = "./ES2E_M.xml"
+    main(xmlFile)
