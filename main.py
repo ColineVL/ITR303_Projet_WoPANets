@@ -4,6 +4,8 @@ from parseXML import parseNetwork
 
 def testAvancer(target):
     edge = target.path[target.currentStep]
+    if isinstance(edge.source, Station):
+        return True
     port = edge.source.ports[edge.destination.nom]
     return len(port.flowsPassed) == port.objectif
 
