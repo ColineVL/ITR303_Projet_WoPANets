@@ -91,8 +91,8 @@ def parseFlows(root):
             stepSource = source
             for pt in tg.findall("path"):
                 stepDest = nodes[pt.get("node")]
-                edge = findEdge(stepSource, stepDest)
-                target.path.append(edge)
+                indexEdge = findEdge(stepSource, stepDest)
+                target.path.append(edges[indexEdge])
                 stepSource = stepDest
 
             targets.append(target)
