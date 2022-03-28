@@ -6,7 +6,7 @@ def testAvancer(target):
     edge = target.path[target.currentStep]
     if isinstance(edge.source, Station):
         return True
-    port = edge.source.ports[edge.destination.nom]
+    port = edge.source.ports[edge.destination.name]
     return len(port.flowsPassed) == port.objectif
 
 
@@ -48,7 +48,7 @@ def main():
             # yay ! Je peux avancer !
 
             edge = target.path[target.currentStep]
-            port = edge.source.ports[edge.destination.nom]
+            port = edge.source.ports[edge.destination.name]
 
             # J'update
             # Calcul du delay de edge.source
