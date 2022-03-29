@@ -44,7 +44,7 @@ def saveNetwork(xmlFile, flows, edges):
 
     res.write("</results>\n")
     res.close()
-    # file2output(resFile)
+    file2output(resFile)
 
 
 def file2output(file):
