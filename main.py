@@ -4,13 +4,13 @@ from saveXML import saveNetwork
 import sys
 
 
-def ajouterMaCourbeArriveeDansSwitch(target, port):
-    flowDejaCompte = target.flow.name in port.flowsPassed
+def ajouterMaCourbeArriveeDansSwitch(target, edge):
+    flowDejaCompte = target.flow.name in edge.flowsPassed
     if not flowDejaCompte:
-        port.arrivalCurveAggregated.add(
+        edge.arrivalCurveAggregated.add(
             target.arrivalCurve.burst, target.arrivalCurve.rate
         )
-        port.flowsPassed.append(target.flow.name)
+        edge.flowsPassed.append(target.flow.name)
 
 
 def testAvancer(target):
@@ -23,9 +23,8 @@ def testAvancer(target):
     if target.completed:
         return False
 
-    # Dans les autres cas on regarde si le switch (dans le port qui nous intéresse) est complet
-    port = edge.source.ports[edge.destination.name]
-    return len(port.flowsPassed) == port.objectif
+    # Dans les autres cas on regarde si le edge est complet
+    return len(edge.flowsPassed) == edge.objectif
 
 
 def main(file):
@@ -49,8 +48,7 @@ def main(file):
         # Dans mon chemin vers la target, je peux passer au step suivant
         target.currentStep += 1
         edge = target.path[target.currentStep]
-        port = edge.source.ports[edge.destination.name]
-        ajouterMaCourbeArriveeDansSwitch(target, port)
+        ajouterMaCourbeArriveeDansSwitch(target, edge)
 
     # Début de la grande boucle de calcul
     # On passe sur toutes les target et on avance aussi loin que possible
@@ -69,13 +67,12 @@ def main(file):
             # yay ! Je peux avancer !
 
             edge = target.path[target.currentStep]
-            port = edge.source.ports[edge.destination.name]
 
             # J'update
-            # Calcul du delay de edge.source
-            port.delay = port.arrivalCurveAggregated.burst / C
+            # Calcul du delay de ce edge
+            edge.delay = edge.arrivalCurveAggregated.burst / C
             # J'aggrave ma courbe d'arrivée
-            target.arrivalCurve.addDelay(port.delay)
+            target.arrivalCurve.addDelay(edge.delay)
 
             # Je vérifie si je suis arrivée à destination
             if target.path[target.currentStep] == target.path[-1]:
@@ -88,12 +85,11 @@ def main(file):
                 nbTargetsCompleted += 1
 
             else:
-                # Il reste encore de la route, je passe au node suivant
+                # Il reste encore de la route, je passe au edge suivant
                 target.currentStep += 1
                 edge = target.path[target.currentStep]
-                port = edge.source.ports[edge.destination.name]
                 # Je m'ajoute dans la courbe d'arrivée de ce nouveau switch, si mon flow n'a pas déjà été compté
-                ajouterMaCourbeArriveeDansSwitch(target, port)
+                ajouterMaCourbeArriveeDansSwitch(target, edge)
 
                 # Je vérifie si ce switch a toutes les infos qu'il lui faut pour calculer son délai, retour au début de la boucle while !
 
