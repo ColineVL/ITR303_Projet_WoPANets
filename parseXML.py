@@ -64,15 +64,10 @@ def parseEdges(root):
 
         edge = Edge(source, dest, name)
         edges.append(edge)
-        # Pour chaque edge, je dois aussi l'ajouter dans les ports du switch source
-        if isinstance(source, Switch):
-            source.ports[dest.name] = edge
         # A chaque fois je le crée dans les deux sens : je dois recommencer pour l'autre sens
         source, dest = dest, source
         edge = Edge(source, dest, name)
         edges.append(edge)
-        if isinstance(source, Switch):
-            source.ports[dest.name] = edge
 
 
 def parseFlows(root):

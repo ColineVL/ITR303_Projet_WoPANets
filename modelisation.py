@@ -168,19 +168,10 @@ class Node:
 class Switch(Node):
     """
     Un switch
-
-    Attributes
-    ----------
-    ports : dict
-        L'ensemble des Edges partant de ce switch : mappe nom destination du edge -> edge
     """
 
     def __init__(self, name):
-        self.ports = {}  # Rempli dans le parseXML
         super().__init__(name)
-
-    def getDelay(self, nomDestination):
-        return self.ports[nomDestination].delay
 
 
 class Station(Node):
@@ -191,16 +182,10 @@ class Station(Node):
     ----------
     arrivalCurveAggregated : ArrivalCurve
         Courbe d'arrivée agrégée des flows qui partent de cette station (la somme quoi)
-    delay : float
-        Délai de la station, en s
     """
 
     def __init__(self, name):
         self.arrivalCurveAggregated = ArrivalCurve(
             0, 0
         )  # Calculé pendant la première passe du programme
-        self.delay = 0  # Calculé pendant la deuxième passe du programme
         super().__init__(name)
-
-    def getDelay(self, _):
-        return self.delay

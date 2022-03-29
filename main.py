@@ -1,4 +1,3 @@
-from modelisation import Station
 from parseXML import parseNetwork
 from saveXML import saveNetwork
 import sys
@@ -14,15 +13,11 @@ def ajouterMaCourbeArriveeDansSwitch(target, edge):
 
 
 def testAvancer(target):
-    edge = target.path[target.currentStep]
-    # Si on part d'une station, on peut toujours avancer
-    if isinstance(edge.source, Station):
-        return True
-
     # Si la target est complète, je ne peux plus l'avancer
     if target.completed:
         return False
 
+    edge = target.path[target.currentStep]
     # Dans les autres cas on regarde si le edge est complet
     return len(edge.flowsPassed) == edge.objectif
 
@@ -39,13 +34,17 @@ def main(file):
         flow.source.arrivalCurveAggregated.add(flow.get_datalength(), flow.get_rate())
 
     # Deuxième passe : on calcule les délais de chaque Station de départ des flows
-    # et j'ajoute ma courbe d'arrivée dans le premier switch du path
+    # Ce délai se retrouve dans chacun des edges partant de cette station
     for target in arrayTargets:
         source = target.flow.source  # Station de départ
-        # Je calcule le délai de la source du flow
-        source.delay = source.arrivalCurveAggregated.burst / C
-        target.arrivalCurve.addDelay(source.delay)
+        # Je calcule le délai de la source du flow, je le stocke dans le edge (si ce n'est pas déjà fait)
+        edge = target.path[target.currentStep]
+        if edge.delay == 0:
+            edge.delay = source.arrivalCurveAggregated.burst / C
+        # J'applique le délai sur ma propre courbe d'arrivée
+        target.arrivalCurve.addDelay(edge.delay)
         # Dans mon chemin vers la target, je peux passer au step suivant
+        # Et j'ajoute ma courbe d'arrivée dans le premier switch du path
         target.currentStep += 1
         edge = target.path[target.currentStep]
         ajouterMaCourbeArriveeDansSwitch(target, edge)
@@ -69,17 +68,16 @@ def main(file):
             edge = target.path[target.currentStep]
 
             # J'update
-            # Calcul du delay de ce edge
-            edge.delay = edge.arrivalCurveAggregated.burst / C
+            # Calcul du delay de ce edge, si ce n'est pas déjà fait
+            if edge.delay == 0:
+                edge.delay = edge.arrivalCurveAggregated.burst / C
             # J'aggrave ma courbe d'arrivée
             target.arrivalCurve.addDelay(edge.delay)
 
             # Je vérifie si je suis arrivée à destination
             if target.path[target.currentStep] == target.path[-1]:
                 # On termine pour cette target
-                target.totalDelay = sum(
-                    edge.source.getDelay(edge.destination.name) for edge in target.path
-                )
+                target.totalDelay = sum(edge.delay for edge in target.path)
                 # Je signale que je l'ai terminée
                 target.completed = True
                 nbTargetsCompleted += 1

@@ -1,0 +1,32 @@
+On étend la définition d'une target. 
+Par target, on sous-entend le "sous-flow" qui part de la source du flow parent de la target, et qui arrive à la target : une "target" contient un path pour y accéder. 
+
+On va boucler sur les targets. 
+Chacune d'entre elle va essayer d'avancer un peu, d'accéder au node suivant (on suit son path).
+Dans chaque node, on garde en souvenir les flows qu'on a déjà comptabilisés. 
+Si une target arrive sur un node nouveau, elle s'ajoute (on note sa courbe d'arrivée dans le node).
+Si le node est complet (ie tous les flows qui doivent passer là ont été comptabilisés), alors on peut avancer !
+Dans ce cas on calcule le délai du node, et on aggrave la courbe d'arrivée de la target en fonction de ce délai.
+
+ALGORITHME pour parcourir les target : 
+--------------------------------------
+FOR target dans tableauTargets :
+   
+    IF la target n'est pas terminée, elle est bloquée sur un node :
+      
+        IF on peut avancer ie le node est complet :
+            calculer le délai du node sur lequel on est bloqué
+            décaler la courbe d'arrivée de target, de délai
+
+            IF la target est terminée, on était bloqué sur le dernier switch avant la station destination :
+                terminer la target en calculant son delay total
+
+            SINON elle n'est pas terminée :
+                passer au edge suivant
+                ajouter la courbe d'arrivée de target dans la courbe d'arrivée du edge
+
+
+
+
+
+TEST POUR AVANCER
