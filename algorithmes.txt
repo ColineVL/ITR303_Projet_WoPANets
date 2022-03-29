@@ -8,25 +8,33 @@ Si une target arrive sur un node nouveau, elle s'ajoute (on note sa courbe d'arr
 Si le node est complet (ie tous les flows qui doivent passer là ont été comptabilisés), alors on peut avancer !
 Dans ce cas on calcule le délai du node, et on aggrave la courbe d'arrivée de la target en fonction de ce délai.
 
-ALGORITHME pour parcourir les target : 
+
+ALGORITHME 1 : préparer les Stations
+---------------------------------------
+FOR flow :
+    dans la station source du flow, ajouter la courbe d'arrivée du flow
+FOR target :
+    calculer le délai de la source du flow si ce n'est pas déjà fait
+    appliquer ce délai sur la courbe d'arrivée de la target
+    passer à l'étape d'après sur le path, ajouter la courbe d'arrivée de la target sur ce nouveau edge
+
+
+ALGORITHME 2 pour parcourir les target : 
+(à exécuter tant qu'on n'a pas tout terminé, en bouclant sur toutes les targets)
 --------------------------------------
-FOR target dans tableauTargets :
-   
-    IF la target n'est pas terminée, elle est bloquée sur un node :
-      
-        IF on peut avancer ie le node est complet :
-            calculer le délai du node sur lequel on est bloqué
-            décaler la courbe d'arrivée de target, de délai
+IF on peut avancer ie le node est complet et la target n'est pas terminée :
+    calculer le délai du node sur lequel on est bloqué
+    décaler la courbe d'arrivée de target, de délai
 
-            IF la target est terminée, on était bloqué sur le dernier switch avant la station destination :
-                terminer la target en calculant son delay total
+    IF la target est terminée, ie on était bloqué sur le dernier switch avant la station destination :
+        terminer la target en calculant son delay total (somme des delay de chaque edge de son path)
 
-            SINON elle n'est pas terminée :
-                passer au edge suivant
-                ajouter la courbe d'arrivée de target dans la courbe d'arrivée du edge
+    SINON elle n'est pas terminée :
+        passer au edge suivant
+        ajouter la courbe d'arrivée de target dans la courbe d'arrivée du edge
 
 
-
-
-
-TEST POUR AVANCER
+ALGORITHME 3 pour calculer les load sur chaque edge :
+----------------------------------------------------
+FOR edge :
+    load = le rate de la courbe d'arrivée du edge (somme des arrivées) / C (fois 100 pour un %)
