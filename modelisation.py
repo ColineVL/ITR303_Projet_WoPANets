@@ -51,7 +51,7 @@ class Target:
         Flow parent
     destination : Station
         La target en elle-même : où va-t-on ?
-    currentStep : float
+    currentStep : int
         Indice de path : où on s'est arrêté la dernière fois qu'on a calculé quelque chose sur ce flow pour cette target
     arrivalCurve : ArrivalCurve
         Courbe d'arrivée du flow pour cette target
